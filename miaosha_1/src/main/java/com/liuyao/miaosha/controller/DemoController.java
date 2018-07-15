@@ -1,7 +1,10 @@
 package com.liuyao.miaosha.controller;
 
+import com.liuyao.miaosha.domain.User;
 import com.liuyao.miaosha.result.CodeMsg;
 import com.liuyao.miaosha.result.Result;
+import com.liuyao.miaosha.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
@@ -16,6 +19,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/demo")
 public class DemoController {
+
+    @Autowired
+    UserService userService;
 
     @RequestMapping("/hello")
     @ResponseBody
@@ -34,5 +40,19 @@ public class DemoController {
     public String thymeleaf(Model model) {
         model.addAttribute("name", "liuyao");
         return "hello";
+    }
+
+    @RequestMapping("/db/get")
+    @ResponseBody
+    public Result<User> dbGet() {
+        User user = userService.getById(1);
+        return Result.success(user);
+    }
+
+    @RequestMapping("/db/tx")
+    @ResponseBody
+    public Result<Boolean> dbTx() {
+        userService.tx();
+        return Result.success(true);
     }
 }
