@@ -1,6 +1,8 @@
 package com.liuyao.miaosha.controller;
 
 import com.liuyao.miaosha.domain.User;
+import com.liuyao.miaosha.redis.RedisService;
+import com.liuyao.miaosha.redis.UserKey;
 import com.liuyao.miaosha.result.CodeMsg;
 import com.liuyao.miaosha.result.Result;
 import com.liuyao.miaosha.service.UserService;
@@ -22,6 +24,9 @@ public class DemoController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    RedisService redisService;
 
     @RequestMapping("/hello")
     @ResponseBody
@@ -54,5 +59,21 @@ public class DemoController {
     public Result<Boolean> dbTx() {
         userService.tx();
         return Result.success(true);
+    }
+
+    @RequestMapping("/redis/get")
+    @ResponseBody
+    public Result<Long> redisGet() {
+        Long v1 = redisService.get(UserKey.getById, "key1", Long.class);
+        return Result.success(v1);
+    }
+
+    @RequestMapping("/redis/set")
+    @ResponseBody
+    public Result<User> redisSet() {
+        User user = new User(1, "1111");
+        boolean res = redisService.set(UserKey.getById, "1", user);
+        User user1 = redisService.get(UserKey.getById, "1", User.class);
+        return Result.success(user1);
     }
 }
