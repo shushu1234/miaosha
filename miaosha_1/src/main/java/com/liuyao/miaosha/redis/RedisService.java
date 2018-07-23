@@ -14,7 +14,15 @@ public class RedisService {
     @Autowired
     JedisPool jedisPool;
 
-
+    /**
+     * 获取单个对象
+     *
+     * @param prefix
+     * @param key
+     * @param clazz
+     * @param <T>
+     * @return
+     */
     public <T> T get(KeyPrefix prefix, String key, Class<T> clazz) {
 
         Jedis jedis = null;
@@ -44,6 +52,15 @@ public class RedisService {
         }
     }
 
+    /**
+     * 设置对象
+     *
+     * @param prefix
+     * @param key
+     * @param value
+     * @param <T>
+     * @return
+     */
     public <T> boolean set(KeyPrefix prefix, String key, T value) {
 
         Jedis jedis = null;
@@ -54,13 +71,27 @@ public class RedisService {
                 return false;
             }
             String realKey = prefix.getPrefix() + key;
-            jedis.set(realKey, str);
+            int seconds = prefix.expireSeconds();
+            if (seconds <= 0) {
+                jedis.set(realKey, str);
+            } else {
+                jedis.setex(realKey, seconds, str);
+            }
+
             return true;
         } finally {
             returnToPool(jedis);
         }
     }
 
+    /**
+     * 判断key是否存在
+     *
+     * @param prefix
+     * @param key
+     * @param <T>
+     * @return
+     */
     public <T> boolean exists(KeyPrefix prefix, String key) {
         Jedis jedis = null;
         try {
@@ -71,6 +102,44 @@ public class RedisService {
             returnToPool(jedis);
         }
 
+    }
+
+    /**
+     * 自增
+     *
+     * @param prefix
+     * @param key
+     * @param <T>
+     * @return
+     */
+    public <T> Long incr(KeyPrefix prefix, String key) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            String realKey = prefix.getPrefix() + key;
+            return jedis.incr(realKey);
+        } finally {
+            returnToPool(jedis);
+        }
+    }
+
+    /**
+     * 减少
+     *
+     * @param prefix
+     * @param key
+     * @param <T>
+     * @return
+     */
+    public <T> Long decr(KeyPrefix prefix, String key) {
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            String realKey = prefix.getPrefix() + key;
+            return jedis.decr(realKey);
+        } finally {
+            returnToPool(jedis);
+        }
     }
 
     private <T> String beanToString(T value) {
