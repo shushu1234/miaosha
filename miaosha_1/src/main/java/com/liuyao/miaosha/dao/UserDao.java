@@ -11,10 +11,10 @@ import org.apache.ibatis.annotations.Select;
  */
 @Mapper
 public interface UserDao {
-    @Select("select * from user where id = #{id}")
+    @Select("select * from miaosha_user where id = #{id}")
     public User getById(@Param("id") int id);
 
-    @Insert("insert into user(id,name) values(#{id},#{name})")
+    @Insert("insert into miaosha_user(id,name) values(#{id},#{name})")
     int insert(User user);
 }
 

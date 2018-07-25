@@ -16,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author liuyao
@@ -51,13 +52,13 @@ public class MiaoshaUserService {
         if (!calcPass.equals(dbPasss)) {
             throw new GlobalException(CodeMsg.PASSWORD_ERROR);
         }
-        addCookie(response, user);
+        String token = UUIDUtil.uuid();
+        addCookie(response, token, user);
         return true;
     }
 
-    private void addCookie(HttpServletResponse response, MiaoshaUser user) {
+    private void addCookie(HttpServletResponse response, String token, MiaoshaUser user) {
         //        生成cookie
-        String token = UUIDUtil.uuid();
         redisService.set(MiaoshaUserKey.token, token, user);
         Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
         cookie.setMaxAge(MiaoshaUserKey.token.expireSeconds());
@@ -72,7 +73,7 @@ public class MiaoshaUserService {
         MiaoshaUser miaoshaUser = redisService.get(MiaoshaUserKey.token, token, MiaoshaUser.class);
 //        延长有效期，相当于再设置一遍
         if (miaoshaUser != null) {
-            addCookie(response, miaoshaUser);
+            addCookie(response, token, miaoshaUser);
         }
         return miaoshaUser;
     }

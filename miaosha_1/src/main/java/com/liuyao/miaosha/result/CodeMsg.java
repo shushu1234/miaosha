@@ -2,7 +2,6 @@ package com.liuyao.miaosha.result;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.aspectj.apache.bcel.classfile.Code;
 
 /**
  * Created By liuyao on 2018/07/14 11:16.
@@ -29,6 +28,12 @@ public class CodeMsg {
         this.msg = msg;
     }
 
+    /**
+     * 变长的错误参数
+     *
+     * @param args
+     * @return
+     */
     public CodeMsg fillArgs(Object... args) {
         int code = this.code;
         String message = String.format(this.msg, args);

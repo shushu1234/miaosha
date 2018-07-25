@@ -28,12 +28,24 @@ public class Result<T> {
         this.msg = cm.getMsg();
     }
 
-    //    成功的时候只需要传data就行
+    /**
+     * 成功的时候只需要传data数据就行
+     *
+     * @param data 成功时的数据
+     * @param <T>
+     * @return
+     */
     public static <T> Result<T> success(T data) {
         return new Result<T>(data);
     }
 
-    //失败的时候传CodeMsg
+    /**
+     * 失败的时候传CodeMsg
+     *
+     * @param cm  失败的CodeMsg
+     * @param <T>
+     * @return
+     */
     public static <T> Result<T> error(CodeMsg cm) {
         return new Result<T>(cm);
     }
