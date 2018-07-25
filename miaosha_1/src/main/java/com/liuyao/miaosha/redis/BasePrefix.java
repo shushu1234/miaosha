@@ -3,6 +3,7 @@ package com.liuyao.miaosha.redis;
 /**
  * Created By liuyao on 2018/07/16 13:48.
  */
+
 public abstract class BasePrefix implements KeyPrefix {
 
     private int expireSeconds;
@@ -20,12 +21,16 @@ public abstract class BasePrefix implements KeyPrefix {
 
     @Override
     public int expireSeconds() {
-        return 0; //默认0代表永不过期
+        return expireSeconds; //默认0代表永不过期
     }
 
     @Override
     public String getPrefix() {
         String className = getClass().getSimpleName();
         return className + ":" + prefix;
+    }
+
+    public int getExpireSeconds() {
+        return expireSeconds;
     }
 }

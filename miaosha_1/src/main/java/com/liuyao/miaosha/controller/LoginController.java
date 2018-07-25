@@ -13,6 +13,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
 /**
  * Created By liuyao on 2018/07/14 10:22.
  */
@@ -34,25 +37,10 @@ public class LoginController {
 
     @RequestMapping("/do_login")
     @ResponseBody
-    public Result<Boolean> doLogin(LoginVo loginVo) {
+    public Result<Boolean> doLogin(HttpServletResponse response, @Valid LoginVo loginVo) {
         log.info("{}", loginVo);
-        String passinput = loginVo.getPassword();
-        String mobile = loginVo.getMobile();
-        if (StringUtils.isEmpty(passinput)) {
-            return Result.error(CodeMsg.PASSWORD_EMPTY);
-        }
-        if (StringUtils.isEmpty(mobile)) {
-            return Result.error(CodeMsg.MOBILE_EMPTY);
-        }
-        if (!ValidatorUtil.isMobile(mobile)) {
-            return Result.error(CodeMsg.MOBILE_ERROR);
-        }
-        CodeMsg cm = miaoshaUserService.login(loginVo);
-        if (cm.getCode() == 0) {
-            return Result.success(true);
-        } else {
-            return Result.error(cm);
-        }
+        miaoshaUserService.login(response, loginVo);
+        return Result.success(true);
     }
 
 
