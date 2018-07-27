@@ -9,14 +9,12 @@ import com.liuyao.miaosha.result.CodeMsg;
 import com.liuyao.miaosha.util.MD5Util;
 import com.liuyao.miaosha.util.UUIDUtil;
 import com.liuyao.miaosha.vo.LoginVo;
-import org.aspectj.apache.bcel.classfile.Code;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author liuyao
@@ -34,7 +32,7 @@ public class MiaoshaUserService {
         return miaoshaUserDao.getById(id);
     }
 
-    public boolean login(HttpServletResponse response, LoginVo loginVo) {
+    public String login(HttpServletResponse response, LoginVo loginVo) {
         if (loginVo == null) {
             throw new GlobalException(CodeMsg.SERVER_ERROR);
         }
@@ -52,15 +50,19 @@ public class MiaoshaUserService {
         if (!calcPass.equals(dbPasss)) {
             throw new GlobalException(CodeMsg.PASSWORD_ERROR);
         }
+//        利用uuid生成token
         String token = UUIDUtil.uuid();
         addCookie(response, token, user);
-        return true;
+        return token;
     }
 
     private void addCookie(HttpServletResponse response, String token, MiaoshaUser user) {
-        //        生成cookie
+//        生成cookie
+//        以token为key，用户信息为value，存到redis中
         redisService.set(MiaoshaUserKey.token, token, user);
+//        并把token放到cookie中
         Cookie cookie = new Cookie(COOKIE_NAME_TOKEN, token);
+//        给cookie这是过期时间，这里设置和在redis中的key一样长的时间
         cookie.setMaxAge(MiaoshaUserKey.token.expireSeconds());
         cookie.setPath("/");
         response.addCookie(cookie);
