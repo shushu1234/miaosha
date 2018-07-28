@@ -43,6 +43,14 @@ public class MiaoshaController {
     @Autowired
     MiaoshaService miaoshaService;
 
+    /**
+     * 优化前QPS；1835
+     *
+     * @param model
+     * @param miaoshaUser
+     * @param goodsId
+     * @return
+     */
     @RequestMapping("/do_miaosha")
     public String toDetail(Model model, MiaoshaUser miaoshaUser, @RequestParam("goodsId") long goodsId) {
         model.addAttribute("user", miaoshaUser);

@@ -8,6 +8,7 @@ import com.liuyao.miaosha.domain.User;
 import com.liuyao.miaosha.vo.GoodsVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,9 +29,9 @@ public class GoodsService {
         return goodsDao.getGoodsVoByGoodsId(goodsId);
     }
 
-    public void reduceStock(GoodsVo goodsVo) {
+    public int reduceStock(GoodsVo goodsVo) {
         MiaoshaGoods miaoshaGoods = new MiaoshaGoods();
         miaoshaGoods.setGoodsId(goodsVo.getId());
-        goodsDao.reduceStock(miaoshaGoods);
+        return goodsDao.reduceStock(miaoshaGoods);
     }
 }
