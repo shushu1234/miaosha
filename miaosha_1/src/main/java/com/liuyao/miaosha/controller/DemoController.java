@@ -1,6 +1,7 @@
 package com.liuyao.miaosha.controller;
 
 import com.liuyao.miaosha.domain.User;
+import com.liuyao.miaosha.rabbitmq.MQSender;
 import com.liuyao.miaosha.redis.RedisService;
 import com.liuyao.miaosha.redis.UserKey;
 import com.liuyao.miaosha.result.CodeMsg;
@@ -27,6 +28,17 @@ public class DemoController {
 
     @Autowired
     RedisService redisService;
+
+    @Autowired
+    MQSender sender;
+
+    @RequestMapping("/mq")
+    @ResponseBody
+    Result<String> mq() {
+        sender.send("hello liuyao");
+        return Result.success("hello world");
+    }
+
 
     @RequestMapping("/hello")
     @ResponseBody
